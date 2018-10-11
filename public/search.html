@@ -1,0 +1,160 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:fb="http://ogp.me/ns/fb#">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <title>Camera and Video Control with HTML5 Example</title>
+    <meta name="description" content="Access the desktop camera and video using HTML, JavaScript, and Canvas.  The camera may be controlled using HTML5 and getUserMedia." />
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
+
+<!-- data table -->
+<!--     <link rel="stylesheet" type="text/css" href="DataTables/datatables.min.css"/>
+    <script type="text/javascript" src="DataTables/datatables.min.js"></script> -->
+<!-- data table -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.css"/>
+ 
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.js"></script>
+
+    <script type="text/javascript">
+
+      var username;
+      var firstname;
+      var surname;
+      var level;
+      // var chatHistory = $("#privatechat-history");
+      var wow;
+
+
+    $.post("/username",
+    function(data){
+        username = data.username;
+        surname = data.surname;
+        firstname = data.firstname;
+        level = data.level;
+        if(level == 's')
+        {
+          $('.menu').append("<li><a href=\"createmember\">Add photo</a></li>");
+          $('.menu').append("<li><a href=\"learn\">Learn</a></li>");
+        }
+        if(level == 't')
+        {
+          $('.menu').append("<li><a href=\"class\">Class</a></li>");
+        }
+        $('.username-detail').append("<li><a href=\"analyze\">Welcome "+firstname+"  "+surname+"</a></li>");
+        $('.username-detail').append("<li ><a href=\"#\" class=\"logout\">Logout</a></li>");
+    });
+
+
+
+
+    $.ajax({
+        type: "get",
+        url: "/select_demo",
+        success: function(data) {
+
+            x = data;
+            console.log(x);
+            for(var i in x)
+            {
+               $('#example>tbody').append("<tr><td>"+x[i].name+"</td><td>"+x[i].subject+"</td><td>"+x[i].attendance_count+"</td><td>"+x[i].date+"</td></tr>");
+            }
+
+
+        }
+    });
+
+    // $(document).ready(function() {
+    //     $('#example').DataTable();
+    // });
+
+    $(function () {
+
+        $('#example').DataTable();
+
+        $( ".logout" ).click(function() { 
+            $.ajax({
+
+                type: "POST",
+                url: "/logout",
+
+            
+                success: function(data) {
+                    window.location.href="/";
+                }
+            })
+        });
+    });
+
+
+
+
+    </script>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <!--<div class="navbar-header">
+      <a class="navbar-brand" href="#">WebSiteName</a>
+    </div>-->
+    <ul class="nav navbar-nav menu">
+      <li><a href="home">Home</a></li>
+      <li class="active"><a href="#">Search</a></li>
+      <li><a href="chatpage">Chat</a></li>
+    </ul>
+    <ul class="nav navbar-nav username-detail">
+    </ul>
+  </div>
+</nav>
+
+<div class="container">
+  <h2>Time attendance</h2>
+
+
+    <table id="example" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <!--userID face_id subject count_each_subject count_class date-->
+                <!-- <th>Name</th>
+                <th>Position</th>
+                <th>Office</th>
+                <th>Age</th>
+                <th>Start date</th>
+                <th>Salary</th> -->
+                <th>Name</th>
+                <th>Subject</th>
+                <th>Attendance check</th>
+                <th>Last update</th>
+            </tr>
+        </thead>
+       <!--  <tfoot>
+            <tr>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Office</th>
+                <th>Age</th>
+                <th>Start date</th>
+                <th>Salary</th>
+            </tr>
+        </tfoot> -->
+        <tbody id="demo">
+           <!--  <tr>
+                <td>Tiger Nixon</td>
+                <td>System Architect</td>
+                <td>Edinburgh</td>
+                <td>61</td>
+                <td>2011/04/25</td>
+                <td>$320,800</td>
+            </tr>-->
+
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

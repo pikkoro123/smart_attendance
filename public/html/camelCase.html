@@ -1,0 +1,106 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.7.7/xlsx.core.min.js"></script>
+<script>
+var wow= [];
+    String.prototype.replaceAt=function(index, replacement) {
+    return this.substr(0, index) + replacement+ this.substr(index + replacement.length);
+}
+   function handleFile(e) {
+     //Get the files from Upload control
+        var files = e.target.files;
+        var i, f;
+     //Loop through files
+        for (i = 0, f = files[i]; i != files.length; ++i) {
+            var reader = new FileReader();
+            var name = f.name;
+            reader.onload = function (e) {
+                var data = e.target.result;
+
+                var result;
+                var workbook = XLSX.read(data, { type: 'binary' });
+                
+                var sheet_name_list = workbook.SheetNames;
+                sheet_name_list.forEach(function (y) { /* iterate through sheets */
+                    //Convert the cell value to Json
+                    var roa = XLSX.utils.sheet_to_json(workbook.Sheets[y]);
+                    if (roa.length > 0) {
+                        result = roa;
+                    }
+                });
+               //Get the first column first cell value
+               wow = result;
+                // alert(result[0].Column1);
+            };
+            reader.readAsArrayBuffer(f);
+            // console.log(result);
+        }
+        // wtfMan();
+    }
+
+    String.prototype.toCamelCase = function() {
+    return this.replace(/^([A-Z])|\s(\w)/g, function(match, p1, p2, offset) {
+        if (p2) return p2.toUpperCase();
+        return p1.toUpperCase();        
+    });
+    };
+
+    function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+    function parse(){
+        for(var i in wow)
+        {
+            if(1)
+            {
+              $('ul#wtf').append('<li>'+wow[i].DOC_DELIVERY_PLACE+'</li>');
+              console.log('w');
+            }
+            else if(wow[i].DOC_DELIVERY_PLACE.indexOf('_')==-1)
+            {
+
+                // mystring.replace(/r/g, '')
+                $('ul#wtf').append('<li>'+capitalizeFirstLetter(wow[i].DOC_DELIVERY_PLACE)+'</li>');
+                // $('ul#wtf').append('<li>'+wow[i].DOC_DELIVERY_PLACE.toCamelCase()+'</li>');
+            }
+            // else
+            // {
+            //     // for(j in wow[i].DOC_DELIVERY_PLACE)
+            //     // {
+            //     //     // console.log(j);
+            //     //     if(wow[i].DOC_DELIVERY_PLACE[j]=='_')
+            //     //     {
+            //     //         j++;
+            //     //         // var z = wow[i].DOC_DELIVERY_PLACE[j];
+            //     //         // wow[i].DOC_DELIVERY_PLACE.replaceAt(j, z.toUpperCase());
+            //     //         // var z = wow[i].DOC_DELIVERY_PLACE[j];
+            //     //         // z = z.toUpperCase();
+            //     //         // wow[i].DOC_DELIVERY_PLACE[j] = z;  
+            //     //         // wow[i].DOC_DELIVERY_PLACE[j]=wow[i].DOC_DELIVERY_PLACE[j].toUpperCase();                      
+            //     //     }
+            //     //     else
+            //     //     {
+            //     //         // var z = wow[i].DOC_DELIVERY_PLACE[j].toString().toLowerCase();
+            //     //         // wow[i].DOC_DELIVERY_PLACE.replaceAt(j, z);
+            //     //         // var z = wow[i].DOC_DELIVERY_PLACE[j];
+            //     //         // z = z.toLowerCase();
+
+            //     //         // wow[i].DOC_DELIVERY_PLACE[j] = z; 
+            //     //         // wow[i].DOC_DELIVERY_PLACE[j]=wow[i].DOC_DELIVERY_PLACE[j].toLowerCase();
+            //     //     } 
+            //     // }
+            //     // $('ul#wtf').append('<li>'+wow[i].DOC_DELIVERY_PLACE.toLowerCase()+'</li>');
+            //     $('ul#wtf').append('<li>'+wow[i].DOC_DELIVERY_PLACE.replace(/_/g,' ').toLowerCase().toCamelCase()+'</li>');
+            // }
+        }
+    }
+
+  //Change event to dropdownlist
+  $(document).ready(function(){
+    $('#files').change(handleFile);
+  });
+</script>
+<input type="file" id="files" name="files"/>
+<ul id='wtf'>
+
+</ul>

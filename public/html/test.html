@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+  <head>
+
+    <title>Ossas</title>
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- <link rel="stylesheet" type="text/css" href="sidebar.css"> -->
+    <!-- <link rel="stylesheet" type="text/css" href="main.css"> -->
+    
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+
+    <script type="text/javascript">
+      $(function (){
+
+
+        var socket = io();
+        socket.emit('login', {
+          'username' : 'pikkoro' 
+        });
+        // socket.emit('logout', {
+        //   'username' : 'username' 
+        // });
+
+      });
+
+    </script>
+
+  </head>
+  <body>
+  </body>
+
+</html>

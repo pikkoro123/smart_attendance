@@ -1,0 +1,265 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:fb="http://ogp.me/ns/fb#">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <title>Camera and Video Control with HTML5 Example</title>
+    <meta name="description" content="Access the desktop camera and video using HTML, JavaScript, and Canvas.  The camera may be controlled using HTML5 and getUserMedia." />
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+
+        var username;
+        var firstname;
+        var surname;
+        var level;
+        // var chatHistory = $("#privatechat-history");
+        var wow;
+
+
+        $.post("/username",
+        function(data){
+            username = data.username;
+            surname = data.surname;
+            firstname = data.firstname;
+            level = data.level;
+            if(level == 't')
+            {
+                $('.menu').append("<li class=\"active\"><a href=\"class\">Class</a></li>");
+            }
+            $('.username-detail').append("<li><a href=\"analyze\">Welcome "+firstname+"  "+surname+"</a></li>");
+            $('.username-detail').append("<li ><a href=\"#\" class=\"logout\">Logout</a></li>");
+        });
+
+        $.post("/query_class",
+        function(data){
+            for(i in data)
+            {   
+                $('#choose_class').append('<option value={"class":"'+data[i].class+'","sec":"'+data[i].section+'"}>'+data[i].class+'/'+data[i].section+'</option>');
+                $('#choose_class_modal').append('<option value={"class":"'+data[i].class+'","sec":"'+data[i].section+'"}>'+data[i].class+'/'+data[i].section+'</option>');
+                // $('#choose_section2').append("<option value="+data[i].section+">"+data[i].section+"</option>");
+            }
+        });
+    </script>
+</head>
+<body>
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+
+            <ul class="nav navbar-nav menu">
+                <li ><a href="home">Home</a></li>
+                <li ><a href="search">Search</a></li>
+                <li><a href="chatpage">Chat</a></li>
+                
+            </ul>
+            <ul class="nav navbar-nav username-detail">
+
+            </ul>
+            
+        </div>
+    </nav>
+    <div class="container">
+        <div class="container">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#create">Create Class</button><!-- data-target="#exampleModal" data-whatever="@getbootstrap" -->
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#remove">Remove Class</button>
+        </div>
+
+
+
+        <div class="container">
+            <h2>Subject</h2>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-4">
+                    <!-- <label for="class"><b>Subject</b></label> -->
+                    <select class="form-control" id="choose_class" class="form-control" name="class" required>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-primary" id="start_monitoring">Start</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+<!-- 
+        <div class="container">
+            <div class= "row">
+                <div class="col-sm-3">
+                    <ul class="list-group">
+                      <li class="list-group-item active">Cras justo odio</li>
+                      <li class="list-group-item">Dapibus ac facilisis in</li>
+                      <li class="list-group-item">Morbi leo risus</li>
+                      <li class="list-group-item">Porta ac consectetur ac</li>
+                      <li class="list-group-item">Vestibulum at eros</li>
+                    </ul>
+                </div>
+                <div class="col-sm-9">
+
+                </div>
+            </div>
+<div class="row">
+  <div class="col-sm-4">
+    <div class="list-group" id="list-tab" role="tablist">
+      <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list" href="#list-home" role="tab" aria-controls="home">Home</a>
+      <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="#list-profile" role="tab" aria-controls="profile">Profile</a>
+      <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="#list-messages" role="tab" aria-controls="messages">Messages</a>
+      <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="#list-settings" role="tab" aria-controls="settings">Settings</a>
+    </div>
+  </div>
+  <div class="col-sm-8">
+    <div class="tab-content" id="nav-tabContent">
+      <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">...</div>
+      <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">...</div>
+      <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">...</div>
+      <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">...</div>
+    </div>
+  </div>
+</div>
+
+        </div> -->
+
+
+
+
+    </div>
+
+<div class="modal fade" id="create" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Create class</h5>
+<!--         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+      </div>
+      <div class="modal-body">
+        <form id="create_class">
+          <div class="form-group">
+            <label for="code" class="col-form-label">CODE:</label>
+            <input type="text" class="form-control" id="code" name="code">
+          </div>
+          <div class="form-group">
+            <label for="section" class="col-form-label">Section:</label>
+            <input type="text" class="form-control" id="section" name="section">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="save_class">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="remove" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Remove class</h5>
+      </div>
+
+      <div class="modal-body">
+        <form id="create_class">
+          <div class="form-group">
+            <label for="class"><b>Class/Section</b></label>
+            <select class="form-control" id="choose_class_modal" class="form-control" name="class" required>
+            </select>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="remove_class">Remove</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <script>
+        $(function () {
+
+            $('.modal').on('hidden.bs.modal', function () {
+                $(this).find('form').trigger('reset');
+            })
+
+            $( "#save_class" ).click(function() { 
+                // $('#choose_class').append("<option value={'class':'"+document.getElementById('code').value+"','sec':'"+document.getElementById('section').value+"'}>"+document.getElementById('code').value+"/"+document.getElementById('section').value+"</option>");
+                // $('#choose_class_modal').append("<option value={'class':'"+document.getElementById('code').value+"','sec':'"+document.getElementById('section').value+"'}>"+document.getElementById('code').value+"/"+document.getElementById('section').value+"</option>");
+                $('#choose_class').append('<option value={"class":"'+document.getElementById('code').value+'","sec":"'+document.getElementById('section').value+'"}>'+document.getElementById('code').value+'/'+document.getElementById('section').value+'</option>');
+                $('#choose_class_modal').append('<option value={"class":"'+document.getElementById('code').value+'","sec":"'+document.getElementById('section').value+'"}>'+document.getElementById('code').value+'/'+document.getElementById('section').value+'</option>');
+                $.ajax({
+
+                    type: "POST",
+                    url: "/save_class",
+                    data: {
+                        username: username,
+                        class: document.getElementById('code').value,
+                        section: document.getElementById('section').value
+                    },
+                
+                    success: function(data) {
+
+                    }
+                })
+            });
+
+            $( "#remove_class" ).click(function() { 
+                // $(".ct option[value='X']").remove();
+                var class_chosen = $('#choose_class_modal').val();
+                $("#choose_class option[value='"+class_chosen+"']").remove();
+                $("#choose_class_modal option[value='"+class_chosen+"']").remove();
+                var class_chosen_parse = JSON.parse(class_chosen);
+                $.ajax({
+
+                    type: "POST",
+                    url: "/delete_class",
+                    data: {
+                        username: username,
+                        class: class_chosen_parse.class,
+                        section: class_chosen_parse.sec
+                    },
+                
+                    success: function(data) {
+
+                    }
+                })
+            });
+
+
+            $( ".logout" ).click(function() { 
+                $.ajax({
+
+                    type: "POST",
+                    url: "/logout",
+
+                
+                success: function(data) {
+                    window.location.href="/";
+                }
+            })
+            });
+
+        });
+
+
+    </script>
+
+</body>
+</html>

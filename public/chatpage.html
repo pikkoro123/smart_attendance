@@ -1,0 +1,308 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:fb="http://ogp.me/ns/fb#">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <title>Camera and Video Control with HTML5 Example</title>
+    <meta name="description" content="Access the desktop camera and video using HTML, JavaScript, and Canvas.  The camera may be controlled using HTML5 and getUserMedia." />
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script type="text/javascript">
+
+      var username;
+      var firstname;
+      var surname;
+      var level;
+
+      var test;
+
+    $.post("/username",
+    function(data){
+        username = data.username;
+        surname = data.surname;
+        firstname = data.firstname;
+        level = data.level;
+        if(level == 's')
+        {
+          $('.menu').append("<li><a href=\"createmember\">Add photo</a></li>");
+          $('.menu').append("<li><a href=\"learn\">Learn</a></li>");
+        }
+        if(level == 't')
+        {
+          $('.menu').append("<li><a href=\"class\">Class</a></li>");
+        }
+        $('.username-detail').append("<li><a href=\"analyze\">Welcome "+firstname+"  "+surname+"</a></li>");
+        $('.username-detail').append("<li ><a href=\"#\" class=\"logout\">Logout</a></li>");
+
+        $.ajax({
+          url: "query_chat_name",
+          type: "get", //send it through get method
+          data: { 
+            username: data.username, 
+            level: data.level,
+          },
+          success: function(response) {
+            for(var i in response)
+            {
+              $('#subject').append("<li class=\"list-group-item "+response[i].username+" \"><a>"+response[i].firstname+"  "+response[i].surname+":"+response[i].class+"/"+response[i].section+"</a></li>");
+            }
+          },
+          error: function(xhr) {
+            //Do Something to handle error
+          }
+        });
+
+
+// alert($('#divID').attr('class').split(' ')[1]);
+        // $.ajax({
+        //   url: "query_chat_name",
+        //   type: "get", //send it through get method
+        //   data: { 
+        //     username: data.username, 
+        //     level: data.level,
+        //   },
+        //   success: function(response) {
+        //     test = response;
+        //     // for(var i in response)
+        //     // {
+        //     //   $('#subject').append("<ul class=\"list-group\" id=\""+response[i].create_class_ID+"\"><a>"+response[i].class+"/"+response[i].section+"</a></ul>");
+        //     // }
+        //   },
+        //   error: function(xhr) {
+        //     //Do Something to handle error
+        //   }
+        // });
+    });
+
+    $(function () {
+
+        var socket = io();
+
+        $( ".logout" ).click(function() { 
+            $.ajax({
+
+                type: "POST",
+                url: "/logout",
+
+            
+                success: function(data) {
+                    window.location.href="/";
+                }
+            })
+        });
+
+        $('#privatechatform').submit(function() {
+          // console.log($('input#privatechat-message').val());
+
+          $.ajax({
+          url: "save_chat_log",
+          type: "get", //send it through get method
+          data: { 
+            username1: username, 
+            username2 : $('#privatechat').attr("class"),
+            message: $('input#privatechat-message').val()
+          },
+          success: function(response) {
+
+          },
+          error: function(xhr) {
+            //Do Something to handle error
+          }
+          });
+
+          socket.emit('chat', {
+            sender : username,
+            receiver : $('#privatechat').attr("class"),
+            message: $('input#privatechat-message').val()
+          });
+
+
+
+        // clear ค่า input
+          $(this)[0].reset();
+          return false;
+          event.preventDefault();
+        });
+
+        socket.on('chat' , function(data){
+          console.log(data.message);
+
+          if (username == data.sender && $('#privatechat').attr("class") == data.receiver) {
+              $("#privatechat-history").append($('<li class="message message--me">').text(data.message));
+          } 
+          else if($('#privatechat').attr("class") ==data.sender && username == data.receiver)
+          {
+              $("#privatechat-history").append($('<li class="message">').text(data.sender + ': ' + data.message));
+          }
+          $('#privatechat-history')[0].scrollTop = $('#privatechat-history')[0].scrollHeight;
+          
+        });
+
+        $('ul#subject').on('click','li', function(){
+          // console.log("wew");
+          // test = this;
+          $('#privatechat').removeClass();
+          // $('#groupchat').addClass('hidden');         
+          $('#privatechat').addClass($(this).attr('class').split(' ')[1]);
+          $('label.friendnameinprivatechat').empty();
+          $('label.friendnameinprivatechat').append($(this).text());
+
+          $('#privatechat-history').empty();
+          $('input#privatechat-message').focus();
+          // console.log($('#privatechat').attr("class"))
+          $.ajax({
+          url: "query_chat_log",
+          type: "get", //send it through get method
+          data: { 
+            username2 : $('#privatechat').attr("class")
+          },
+
+          success: function(response) {
+            test = response;
+            for(var i in response)
+            {
+              if (username == response[i].username1) {
+                  $("#privatechat-history").append($('<li class="message message--me">').text(response[i].massage));
+              } else {
+                  $("#privatechat-history").append($('<li class="message">').text(response[i].username1 + ': ' + response[i].massage));
+              }
+            }
+            $('#privatechat-history')[0].scrollTop = $('#privatechat-history')[0].scrollHeight;
+          },
+          error: function(xhr) {
+            //Do Something to handle error
+          }
+          });
+
+          $('#privatechat-history')[0].scrollTop = $('#privatechat-history')[0].scrollHeight;
+
+
+          
+        });
+    });
+
+
+
+
+    </script>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <ul class="nav navbar-nav menu">
+      <li><a href="home">Home</a></li>
+      <li><a href="search">Search</a></li>
+      <li class="active"><a href="chatpage">Chat</a></li>
+    </ul>
+    <ul class="nav navbar-nav username-detail">
+    </ul>
+  </div>
+</nav>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-2">
+      <ul class="list-group" id="subject">
+
+      </ul>
+    </div>
+    <div class="col-sm-10">
+
+      <div id="privatechat" class="hidden">
+        <div class="box box--chat">
+          <label class="friendnameinprivatechat label label-primary"></label>
+          <ul id="privatechat-history">
+          </ul>
+          <form id="privatechatform" action="">
+            <input type="text" id="privatechat-message" autocomplete="off" placeholder="Enter message here..." class="box">
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
+
+<style type="text/css">
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+html {
+    font-size: 73%;
+}
+body {
+    /*background: #ccc;*/
+    font-family: arial, san-serif;
+    font-size: 1.2em;
+    color: #666;
+}
+
+.box {
+    width: 100%;
+    border-radius: 3px;
+}
+.box--container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.container {
+    max-width: 400px;
+    margin: 0 auto;
+    /*padding: 15px;*/
+}
+/*mine*/
+
+
+.box--chat {
+  background: #fff;
+  padding: 15px;
+  border: 1px solid #eee;
+}
+
+
+#privatechat-history {
+    list-style: none;
+    padding: 0 0 10px 0;
+    overflow: auto;
+    height: 250px;
+}
+#groupchat-history {
+    list-style: none;
+    padding: 0 0 10px 0;
+    overflow: auto;
+    height: 250px;
+}
+.message {
+    background: #eee;
+    padding: 10px 15px;
+    border-radius: 20px;
+    margin-bottom: 5px;
+    float: left;
+    clear: both;
+}
+.message--me {
+    background: #B3ED7A;
+    float: right;
+}
+ 
+#privatechat-message,#groupchat-message {
+    background: #f5f5f5;
+    padding: 10px;
+    border: 1px solid #d5d5d5;
+}
+</style>

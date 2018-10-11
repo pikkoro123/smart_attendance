@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+  <head>
+
+    <title>Log in or sign up</title>
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <!-- <script src="/socket.io/socket.io.js"></script> -->
+
+
+    <script>
+
+// var y=[];
+    $(function () {
+
+
+      var username;
+      var firstname;
+      var surname;
+      // var chatHistory = $("#privatechat-history");
+      var wow;
+
+
+      $.post("/username",
+      function(data){
+        username = data.username;
+        surname = data.surname;
+        firstname = data.firstname;
+        $('.username-detail').append("<li><a>Welcome "+firstname+"  "+surname+"</a></li><li></li>"); //<a>"+username+"</a>
+      });
+
+
+
+
+
+      // $('#example').DataTable();
+
+      $( ".logout" ).click(function() { 
+          $.ajax({
+
+              type: "POST",
+              url: "/logout",
+
+          
+          success: function(data) {
+              window.location.href="/";
+          }
+      })
+      });
+
+
+
+
+
+    });
+
+    function notifyMe() {
+      // Let's check if the browser supports notifications
+      if (!("Notification" in window)) {
+        alert("This browser does not support desktop notification");
+      }
+
+      // Let's check whether notification permissions have already been granted
+      else if (Notification.permission === "granted") {
+        // If it's okay let's create a notification
+        var notification = new Notification("มีอัพเดทการเช็คชื่อ!");
+      }
+
+      // Otherwise, we need to ask the user for permission
+      else if (Notification.permission !== "denied") {
+        Notification.requestPermission(function (permission) {
+          // If the user accepts, let's create a notification
+          if (permission === "granted") {
+            var notification = new Notification("มีอัพเดทการเช็คชื่อ!");
+          }
+        });
+      }
+
+      // At last, if the user has denied notifications, and you 
+      // want to be respectful there is no need to bother them any more.
+    }
+
+    // function spawnNotification(theBody,theIcon,theTitle) {
+    //   var options = {
+    //       body: theBody,
+    //       icon: theIcon
+    //   }
+
+    //   var n = new Notification(theTitle,options);
+    //   setTimeout(n.close.bind(n), 4000);
+    // }
+
+    </script>
+  </head>
+  <body>
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <!--<div class="navbar-header">
+      <a class="navbar-brand" href="#">WebSiteName</a>
+    </div>-->
+    <ul class="nav navbar-nav">
+      <li><a href="home">Home</a></li>
+      <li ><a href="createmember">Create New Member</a></li>
+      <li class="active"><a href="#">Search</a></li>
+      <li ><a href="#" class="logout">Logout</a></li>
+   
+    </ul>
+    
+        <ul class="nav navbar-nav username-detail">
+
+    </ul>
+  </div>
+</nav>
+
+<button onclick="notifyMe()">Notify me!</button>
+<button onclick="Notification.close();">Close</button>
+
+
+
+
+
+
+  </body>
+</html>

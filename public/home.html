@@ -1,0 +1,344 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:fb="http://ogp.me/ns/fb#">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <title>Camera and Video Control with HTML5 Example</title>
+    <meta name="description" content="Access the desktop camera and video using HTML, JavaScript, and Canvas.  The camera may be controlled using HTML5 and getUserMedia." />
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    
+    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>  -->
+
+    <!-- <link rel="stylesheet" href="\bootstrap-4.1.0-dist\css\bootstrap.css"> -->
+    <!-- <link rel="stylesheet" href="\bootstrap-4.1.0-dist\css\bootstrap.grid.css"> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="\bootstrap-4.1.0-dist\js\bootstrap.bundle.js"></script>
+
+
+    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
+
+    <script type="text/javascript">
+
+      var username;
+      var firstname;
+      var surname;
+      var level;
+
+
+//       var wow;
+
+//       var x;
+//       var subject;
+      $.post("/username",
+      function(data){
+        username = data.username;
+        surname = data.surname;
+        firstname = data.firstname;
+        level = data.level;
+        if(level == 's')
+        {
+          $('.menu').append("<li><a href=\"createmember\">Add photo</a></li>");
+          $('.menu').append("<li><a href=\"learn\">Learn</a></li>");
+        }
+        if(level == 't')
+        {
+          $('.menu').append("<li><a href=\"class\">Class</a></li>");
+        }
+        $('.username-detail').append("<li><a href=\"analyze\">Welcome "+firstname+"  "+surname+"</a></li>"); 
+        $('.username-detail').append("<li><a href=\"#\" class=\"logout\">Logout</a></li>");
+
+
+        // $.ajax({
+        //     type: "POST",
+        //     url: "/select_image_from_t",
+
+        //     data: {
+
+        //         username : username
+        //     },
+        //     success: function(data) {
+
+        //         x = data;
+
+        //         for(var i in x)
+        //         {
+        //            $('.help').append(" <tr class=\""+i+"\"><td class=\"hidden\">"+x[i].face_id+"</td><td>"+x[i].firstname+"</td><td>"+x[i].lastname+"</td><td><img src=\""+x[i].image+"\" height=\"120\" width=\"160\"></td><td><img src=\""+x[i].image2+"\" height=\"120\" width=\"160\"></td><td><img src=\""+x[i].image3+"\" height=\"120\" width=\"160\"></td><td><button class=\"delete\" value=\""+i+"\" type=\"button\">Delete</button></td></tr>");
+        //         }
+
+        //     }
+        // });
+
+
+        $.ajax({
+          url: "query_chat_name",
+          type: "get", //send it through get method
+          data: { 
+            username: username, 
+            level: level,
+          },
+          success: function(response) {
+            // console.log(response[0].username)
+            // alert('wew');
+            for(var i in response)
+            {
+              $('#subject').append("<li class=\"list-group-item "+response[i].username+" \"><a>"+response[i].firstname+"  "+response[i].surname+":"+response[i].class+"/"+response[i].section+"</a></li>");
+            }
+          },
+          error: function(xhr) {
+            //Do Something to handle error
+          }
+        });
+      });
+
+
+      //อาจใช้
+
+      // $.post("/query_class",
+      // function(data){
+      //   subject = data;
+      //     // for(i in data)
+      //     // {   
+      //     //     // $('#choose_class').append('<option value={"class":"'+data[i].class+'","sec":"'+data[i].section+'"}>'+data[i].class+'/'+data[i].section+'</option>');
+      //     //     // $('#choose_class_modal').append('<option value={"class":"'+data[i].class+'","sec":"'+data[i].section+'"}>'+data[i].class+'/'+data[i].section+'</option>');
+      //     // }
+      //   for(var i in subject)
+      //   {   
+      //       $("#subject").append("<li class='subjectt list-group-item "+subject[i].class+"_"+subject[i].section+"'><a href=\"/select_name_from_t?class="+subject[i].class+"&&sec="+subject[i].section+"\">"+subject[i].class+"/"+subject[i].section+"</a><ul class=\"list-group"+subject[i].class+"_"+subject[i].section+"\"></ul></li>");
+
+      //         // "+subject[i].class+"_"+subject[i].section+"
+      //   }
+
+        // $.ajax({
+        //   type: "POST",
+        //   url: "/select_name_from_t",
+
+        //   data: {
+
+        //       class : subject[i].class,
+        //       sec : subject[i].section
+        //   },
+        //   success: function(data) {
+        //     console.log("2 "+i);
+        //       console.log(data);
+
+
+        //       x = data;
+        //       for(var j in x)
+        //       {
+        //         console.log(subject[i].class);
+        //          $("."+subject[i].class+"_"+subject[i].section+" ul").append("<li class=\"list-group-item\"><a>"+x[j].firstname+"  "+x[j].surname+"</a></li>");
+        //       }
+
+        //   }
+        // });
+          //$("#subject").append("<ul class='list-group fuck'></ul>");
+          //$(".fuck").append("<li class='list-group-item'>Dapibus ac facilisis in</li><li class=\"list-group-item\">Dapibus ac facilisis in</li><li class=\"list-group-item\">Morbi leo risus</li><li class=\"list-group-item\">Porta ac consectetur ac</li><li class=\"list-group-item\">Vestibulum at eros</li>");
+
+
+      // });
+
+      $(function () {
+
+
+
+
+        // $('li.subjectt> a').click(function(event) { 
+        //           // /$( this ).slideUp();
+        //     event.preventDefault(); 
+        //     $.ajax({
+
+        //         url: $(this).attr('href'),
+        //         success: function(data) {
+        //               x = data;
+        //               for(var j in x)
+        //               {
+        //                 // console.log($(this).parent())
+        //                 // console.log(x[j].class);
+        //                 $('.'+x[j].class+'_'+x[j].section+' ul').siblings().append("<li class=\"list-group-item name\" value=\""+x[j].userID+"\"><a>"+x[j].firstname+"  "+x[j].surname+"</a></li>");
+        //               }
+        //         }
+        //     });
+        //     return false; // for good measure
+        // });
+
+        //         <div class="col-sm-12 hidden about_student">
+        //   <h2>About student</h2>
+        // </div>
+        // <div class="col-sm-12 hidden student_picture">
+        //   <h2>Pictures</h2>
+        // </div>
+
+        $('ul#subject').on('click','li', function(){
+
+
+          // $('#privatechat').addClass($(this).attr('class').split(' ')[1]);
+          $('.about_student').empty();
+          $('.student_picture').empty();
+          // $('.about_student').append("<h2>About student</h2>");
+          $('.student_picture').removeClass('hidden');  
+          $('.student_picture').append("<h2>Pictures</h2>");
+          // $('label.friendnameinprivatechat').append($(this).text());
+
+          $('#privatechat-history').empty();
+          $('input#privatechat-message').focus();
+          $.ajax({
+              type: "POST",
+              url: "/select_image_from_s",
+
+              data: {
+
+                  username : $(this).attr('class').split(' ')[1]
+              },
+              success: function(data) {
+
+                  x = data;
+                  // console.log(data);
+                  // if(x.length == 0)
+                  //   $('.picture').append(" <tr><td><a href=\"createmember\">Please add your face picture</a></td></tr>");
+                  // for(var i in x)
+                  // {
+                     $('.student_picture').append("<div class='col-sm-4'><img src='"+x[0].image+"' height=\"120\" width=\"160\"></div><div class='col-sm-4'><img src='"+x[0].image2+"' height=\"120\" width=\"160\"></div><div class='col-sm-4'><img src='"+x[0].image3+"' height=\"120\" width=\"160\"></div>");
+                  // }
+
+              }
+          });
+
+
+          
+        });
+
+        // $('li.list-group-item name> a').click(function(event) { 
+                  
+        //     event.preventDefault(); 
+        //     alert("wtf");
+        //     $.ajax({
+
+        //         url: $(this).attr('href'),
+        //         success: function(data) {
+        //               x = data;
+        //               for(var j in x)
+        //               {
+        //                 // console.log($(this).parent())
+        //                 // console.log(x[j].class);
+        //                 $('.'+x[j].class+'_'+x[j].section+' ul').siblings().append("<li class=\"list-group-item name\" value=\""+x[j].userID+"\"><a>"+x[j].firstname+"  "+x[j].surname+"</a></li>");
+        //               }
+        //         }
+        //     });
+        //     return false; // for good measure
+        // });
+
+        $( ".logout" ).click(function() { 
+
+          $.ajax({
+
+            type: "POST",
+            url: "/logout",
+
+            
+            success: function(data) {
+              window.location.href="/";
+            }
+          })
+        });
+
+        $('tbody.help').on('click','button.delete', function(){
+          check = $(this).val();
+          face_id = $("tr."+check+">td.hidden").text();
+
+          $.ajax({
+
+            type: "POST",
+            url: "/delete_student",
+            data: {
+              face_id : face_id
+            },
+            
+            success: function(data) {
+
+            }
+          })
+          $("tr."+check+"").remove();
+        });                   
+
+      });
+
+
+
+    </script>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <!--<div class="navbar-header">
+      <a class="navbar-brand" href="#">WebSiteName</a>
+    </div>-->
+    <ul class="nav navbar-nav menu">
+      <li class="active"><a href="#">Home</a></li>
+      <li ><a href="search">Search</a></li>
+      <li><a href="chatpage">Chat</a></li>
+      
+   
+    </ul>
+    <ul class="nav navbar-nav username-detail">
+
+    </ul>
+
+    <!-- <div class="container-fluid navbar-right"> -->
+<!--         <ul class="nav navbar-nav navbar-right">
+          <li class="active"><a href="#" id="logout">Logout <span class="glyphicon glyphicon-off"></span></a></li>
+        </ul>   -->
+      <!-- </div> -->
+  </div>
+</nav>
+
+<div class="container hidden">
+  <h2>Named List Members</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Firstname</th>
+        <th>Lastname</th>
+        <th>Image(1)</th>
+        <th>Image(2)</th>
+        <th>Image(3)</th>
+      </tr>
+    </thead>
+    <tbody class="help">
+
+    </tbody>
+  </table>
+</div>
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-2">
+      <ul class="list-group" id="subject">
+<!--         <li class="list-group-item active">Cras justo odio</li>
+        <li class="list-group-item">Dapibus ac facilisis in</li>
+        <li class="list-group-item">Morbi leo risus</li>
+        <li class="list-group-item">Porta ac consectetur ac</li>
+        <li class="list-group-item">Vestibulum at eros</li> -->
+      </ul>
+    </div>
+    <div class="col-sm-10">
+      <div class="row">
+<!--         <div class="col-sm-12 hidden about_student">
+          <h2>About student</h2>
+        </div> -->
+        <div class="col-sm-12 hidden student_picture">
+          <h2>Pictures</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</body>
+</html>

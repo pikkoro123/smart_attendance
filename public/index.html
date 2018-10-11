@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+  <head>
+
+    <title>Log in or sign up</title>
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <!-- <script src="/socket.io/socket.io.js"></script> -->
+
+
+    <script>
+
+// var y=[];
+      $(function () {
+
+
+        $( "#login" ).submit(function( event ) {
+          // console.log($( "#login" ).serialize());
+          // $.post( "/login", $( "#login" ).serialize() );
+          $.post("/login",$( "#login" ).serialize(),function(data){        
+            if(data=='done')           
+            {
+                window.location.href="/home";
+            }
+          });
+          $('input#username').val('');
+          $('input#password').val('');
+
+        });
+
+        $( "#register" ).submit(function( event ) {   
+          $.ajax({
+           type: "POST",
+            url: "/register",
+            data: $(this).serialize(),
+            success: function(data) {
+              // callback code here\\\\\
+              alert(data);
+            }
+          })
+
+
+          $('input#forclr0').val('');
+          $('input#forclr1').val('');
+          $('input#forclr2').val('');
+          $('input#forclr3').val('');
+          $('input#forclr4').val('');
+          // $.post("/wow",
+          // {
+          //   username: "Donald Duck",
+          //   city: "Duckburg"
+          // },
+          // function(data){
+          //     console.log(data);
+          //    // y.push(data);
+          // });
+          event.preventDefault();
+        });
+
+
+
+
+
+
+
+      });
+
+    </script>
+  </head>
+  <body>
+    <nav class="navbar bg-warning">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Class Attendance</a>
+        </div>
+
+        <form id="login" class="navbar-form navbar-right">
+          <div class="form-group">
+            <label>Username</label>
+            <input id="username" name="username" type="text" class="form-control" placeholder="">
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input id="password" name="password" type="password" class="form-control" placeholder="">
+          </div>
+          <button type="submit" class="btn btn-default">Log In</button>
+        </form>
+      </div>
+    </nav>
+
+
+
+
+  <div class="container" >
+    <div class="col-sm-3">
+    </div>
+    <div class="col-sm-6 blue">
+
+    <form id='register' autocomplete="nope">
+    	<div class="form-group row">
+      		<h1>Create a new account</h1>
+      	</div>
+      <!-- <h4>It's free and always will be.</h4> -->
+      <div class="form-group row">
+      <!-- <div class="row"> -->
+      <div class="col-sm-6">
+        <input id='forclr0' type="text" class="form-control" placeholder="First name" name="firstname">
+      </div>
+      <div class="col-sm-6">
+        <input id='forclr1' type="text" class="form-control" placeholder="Surname" name="surname">
+      </div>
+      </div>
+
+
+      <div class="form-group">
+        <input id='forclr2' type="text" class="form-control" placeholder="Username" name="username">
+      </div>
+      <div class="form-group">
+        <input id='forclr3' type="password" class="form-control" placeholder="Password" name="password">
+      </div>
+      <div class="form-group">
+	    <select id='forclr4' class="form-control placeholder" name="level">
+		    <option value="" selected disabled>Please select</option>
+		    <option value="t">Teacher</option>
+		    <option value="s">Student</option>
+		</select>
+      </div>
+
+      <button type="submit" class="btn btn-default">Create Account</button>
+    </form>
+    </div>
+    <div class="col-sm-3">
+    </div>
+  </div>
+
+
+  </body>
+</html>

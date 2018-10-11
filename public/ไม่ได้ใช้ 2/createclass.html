@@ -1,0 +1,312 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:fb="http://ogp.me/ns/fb#">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <title>Camera and Video Control with HTML5 Example</title>
+    <meta name="description" content="Access the desktop camera and video using HTML, JavaScript, and Canvas.  The camera may be controlled using HTML5 and getUserMedia." />
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+
+      var username;
+      var firstname;
+      var surname;
+      // var chatHistory = $("#privatechat-history");
+      var wow;
+
+
+      $.post("/username",
+      function(data){
+        username = data.username;
+        surname = data.surname;
+        firstname = data.firstname;
+        $('.username-detail').append("<li><a href=\"analyze\">Welcome "+firstname+"  "+surname+"</a></li><li></li>"); //<a>"+username+"</a>
+      });
+    </script>
+</head>
+<body>
+
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+
+        <ul class="nav navbar-nav">
+            <li ><a href="home">Home</a></li>
+            <li class="active"><a href="#">Create New Member</a></li>
+            <li ><a href="search">Search</a></li>
+            <li ><a href="#" class="logout">Logout</a></li>
+        </ul>
+            <ul class="nav navbar-nav username-detail">
+
+    </ul>
+        
+      </div>
+    </nav>
+    <div class="container">
+    <div class="jumbotron text-center">
+      <H1>
+        <video id="video" width="640" height="480" autoplay></video>
+      </H1>
+    </div>
+
+
+    <div class="row-fluid">
+      <div class="span4 text-left"></div>
+      <div class="span4 text-center"><button id="snap" class="sexyButton">Image(1)</button><button id="snap2" class="sexyButton">Image(2)</button><button id="snap3" class="sexyButton">Image(3)</button></div>
+      <div class="span4 text-right"></div>
+    </div>
+        
+        
+    <div class="jumbotron text-center">
+        <H1>
+            <canvas id="canvas" width="160" height="120"></canvas>
+            <canvas id="canvas2" width="160" height="120"></canvas>
+            <canvas id="canvas3" width="160" height="120"></canvas>
+            
+        </H1>
+    </div>
+
+    <img id="image" hidden/>
+    <img id="image2" hidden/>
+    <img id="image3" hidden/>
+
+
+    <form id="save_face_data">
+
+      <div class="container">
+        <label for="firstname"><b>First Name</b></label>
+        <input type="text" id="firstname" class="form-control" name="firstname" required><br>
+        <label for="lastname"><b>Last Name</b></label>
+        <input type="text" id="lastname" class="form-control" name="lastname" required><br>
+          
+        <button id="save" type="submit" class="btn-success center-block form-control">Save</button>
+
+      </div>
+
+    </form>
+
+
+    </div>
+
+
+
+    <script>
+
+
+        function dataURItoBlob(dataURI) {
+          // convert base64 to raw binary data held in a string
+          // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+          var byteString = atob(dataURI.split(',')[1]);
+
+          // separate out the mime component
+          var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+
+          // write the bytes of the string to an ArrayBuffer
+          var ab = new ArrayBuffer(byteString.length);
+
+          // create a view into the buffer
+          var ia = new Uint8Array(ab);
+
+          // set the bytes of the buffer to the correct values
+          for (var i = 0; i < byteString.length; i++) {
+              ia[i] = byteString.charCodeAt(i);
+          }
+
+          // write the ArrayBuffer to a blob, and you're done
+          var blob = new Blob([ab], {type: mimeString});
+          return blob;
+
+        }
+        $(function () {
+
+
+            $( ".logout" ).click(function() { 
+                $.ajax({
+
+                    type: "POST",
+                    url: "/logout",
+
+                
+                success: function(data) {
+                    window.location.href="/";
+                }
+            })
+            });
+
+
+            $( "#save_face_data" ).submit(function( event ) { 
+
+                picture = document.getElementById('image').src;
+                picture2 = document.getElementById('image2').src;
+                picture3 = document.getElementById('image3').src;
+
+                // var dataURL = document.getElementById('canvas').toDataURL('image/png'); //, 1.0
+                // ("#image").src = document.getElementById('canvas').toDataURL('image/png');
+                // var blob = dataURItoBlob(dataURL);
+                //alert(dataURL);
+                $.ajax({
+                    type: "POST",
+                    url: "/save",
+                    // data: $(this).serialize(),
+        
+                    data: {
+                        pic: picture,
+                        // pic2: picture2,
+                        // pic3: picture3,
+                        firstname: document.getElementById('firstname').value,
+                        lastname: document.getElementById('lastname').value,
+                        username: username
+                    },
+                    success: function(data) {
+                        // alert(data);
+                        // $.ajax({
+                        // type: "POST",
+                        // url: "/update",
+                        // // data: $(this).serialize(),
+                        // data: {
+                        //     pic2: picture2,
+                        //     id: data
+                        // },
+                        // success: function(data2) {
+                        //     // $.ajax({
+                        //     // type: "POST",
+                        //     // url: "/update2",
+                        //     // // data: $(this).serialize(),
+                
+                        //     // data: {
+                        //     //     pic3: picture3,
+                        //     //     id: data2
+                        //     // },
+                        //     // success: function(data3) {
+                                
+                        //     //     alert(data3);
+                                
+                        //     // }
+                        //     // })      
+                        // }
+                        // })
+
+                    }
+                })
+
+                $.ajax({
+                    type: "POST",
+                    url: "/update",
+        
+                    data: {
+                        pic2: picture2,
+                        firstname: document.getElementById('firstname').value,
+                        lastname: document.getElementById('lastname').value,
+                        username: username
+                    },
+                    success: function(data) {
+
+                    }
+                })
+
+                $.ajax({
+                    type: "POST",
+                    url: "/update2",
+        
+                    data: {
+                        pic3: picture3,
+                        firstname: document.getElementById('firstname').value,
+                        lastname: document.getElementById('lastname').value,
+                        username: username
+                    },
+                    success: function(data) {
+
+                    }
+                })
+
+                event.preventDefault();
+
+
+            });
+
+        });
+
+
+        // Put event listeners into place
+
+        
+        window.addEventListener("DOMContentLoaded", function() {
+            // Grab elements, create settings, etc.
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+
+            var canvas2 = document.getElementById('canvas2');
+            var context2 = canvas2.getContext('2d');
+
+            var canvas3 = document.getElementById('canvas3');
+            var context3 = canvas3.getContext('2d');
+
+
+            var video = document.getElementById('video');
+            var mediaConfig =  { video: true };
+            var errBack = function(e) {
+                console.log('An error has occurred!', e)
+            };
+
+            var imageurl = document.getElementById('image');
+            var imageurl2 = document.getElementById('image2');
+            var imageurl3 = document.getElementById('image3');
+
+            // Put video listeners into place
+            if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia(mediaConfig).then(function(stream) {
+                    video.src = window.URL.createObjectURL(stream);
+                    video.play();
+                });
+            }
+
+            /* Legacy code below! */
+            else if(navigator.getUserMedia) { // Standard
+                navigator.getUserMedia(mediaConfig, function(stream) {
+                    video.src = stream;
+                    video.play();
+                }, errBack);
+            } else if(navigator.webkitGetUserMedia) { // WebKit-prefixed
+                navigator.webkitGetUserMedia(mediaConfig, function(stream){
+                    video.src = window.webkitURL.createObjectURL(stream);
+                    video.play();
+                }, errBack);
+            } else if(navigator.mozGetUserMedia) { // Mozilla-prefixed
+                navigator.mozGetUserMedia(mediaConfig, function(stream){
+                    video.src = window.URL.createObjectURL(stream);
+                    video.play();
+                }, errBack);
+            }
+
+            // Trigger photo take
+            document.getElementById('snap').addEventListener('click', function() {
+                context.drawImage(video, 0, 0, 160, 120);
+                imageurl.src = document.getElementById('canvas').toDataURL('image/jpg');
+
+            });
+
+            document.getElementById('snap2').addEventListener('click', function() {
+                context2.drawImage(video, 0, 0, 160, 120);
+                imageurl2.src = document.getElementById('canvas2').toDataURL('image/jpg');
+
+            });
+
+            document.getElementById('snap3').addEventListener('click', function() {
+                context3.drawImage(video, 0, 0, 160, 120);
+                imageurl3.src = document.getElementById('canvas3').toDataURL('image/jpg');
+
+            });
+
+            
+
+        }, false);
+
+    </script>
+
+</body>
+</html>

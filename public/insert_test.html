@@ -1,0 +1,116 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:fb="http://ogp.me/ns/fb#">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <title>Camera and Video Control with HTML5 Example</title>
+    <meta name="description" content="Access the desktop camera and video using HTML, JavaScript, and Canvas.  The camera may be controlled using HTML5 and getUserMedia." />
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+    <script type="text/javascript">
+
+        var username;
+        var firstname;
+        var surname;
+        var wow;
+
+
+        $.post("/username",
+        function(data){
+            username = data.username;
+            surname = data.surname;
+            firstname = data.firstname;
+        });
+
+        $(function () {
+
+            $( "#count_each_class" ).submit(function( event ) { 
+
+
+
+                $.ajax({
+                    type: "POST",
+                    url: "/count_each_subject",
+                    // data: $(this).serialize(),
+        
+                    data: {
+
+                        name: document.getElementById('subject').value,
+                        subject: document.getElementById('count_each_subject').value,
+                        attendance_count: document.getElementById('attendance_count').value
+
+
+                        // subject: document.getElementById('subject').value,
+                        // count_each_subject: document.getElementById('count_each_subject').value,
+                        // username: username
+                    },
+                    success: function(data) {
+
+                    }
+                })
+
+                event.preventDefault();
+
+
+            });
+
+
+        });
+
+    </script>
+
+</head>
+<body>
+
+<!--     <form id="count_each_class">
+
+      <div class="container">
+        <label for="subject"><b>  subject</b></label>
+        <input type="text" id="subject" class="form-control" name="subject" required><br>
+        <label for="count_each_subject"><b>count_each_subject</b></label>
+        <input type="text" id="count_each_subject" class="form-control" name="count_each_subject" required><br>
+          
+        <button type="submit" class="btn-success center-block form-control">Save</button>
+
+      </div>
+
+    </form>
+
+    <form id="attendance">
+
+      <div class="container">
+        <label for="face_id"><b>face_id</b></label>
+        <input type="text" id="face_id" class="form-control" name="face_id" required><br>
+        <label for="subject2"><b>subject</b></label>
+        <input type="text" id="subject2" class="form-control" name="subject2" required><br>
+        <button type="submit" class="btn-success center-block form-control">Save</button>
+
+      </div>
+
+    </form> -->
+
+    <form id="count_each_class">
+
+      <div class="container">
+        <label for="subject"><b> name</b></label>
+        <input type="text" id="subject" class="form-control" name="subject" required><br>
+        <label for="count_each_subject"><b> subject</b></label>
+        <input type="text" id="count_each_subject" class="form-control" name="count_each_subject" required><br>
+        <label for="attendance_count"><b> attendance_count</b></label>
+        <input type="text" id="attendance_count" class="form-control" name="attendance_count" required><br>
+          
+        <button type="submit" class="btn-success center-block form-control">Save</button>
+
+      </div>
+
+    </form>
+
+
+</body>
+</html>

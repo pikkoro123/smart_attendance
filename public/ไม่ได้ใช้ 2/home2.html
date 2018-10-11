@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:fb="http://ogp.me/ns/fb#">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <title>Camera and Video Control with HTML5 Example</title>
+    <meta name="description" content="Access the desktop camera and video using HTML, JavaScript, and Canvas.  The camera may be controlled using HTML5 and getUserMedia." />
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
+
+    <script type="text/javascript">
+
+      var username;
+      var firstname;
+      var surname;
+      // var chatHistory = $("#privatechat-history");
+      var wow;
+
+      var x;
+      $.post("/username",
+      function(data){
+        username = data.username;
+        surname = data.surname;
+        firstname = data.firstname;
+        $('.username-detail').append("<li><a href=\"analyze\">Welcome "+firstname+"  "+surname+"</a></li><li></li>"); //<a>"+username+"</a>
+
+      });
+
+      $.ajax({
+          type: "POST",
+          url: "/select",
+
+          data: {
+
+              username : username
+          },
+          success: function(data) {
+
+              x = data;
+
+              for(var i in x)
+              {
+                 $('.help').append(" <tr class=\""+i+"\"><td class=\"hidden\">"+x[i].face_id+"</td><td>"+x[i].firstname+"</td><td>"+x[i].lastname+"</td><td><img src=\""+x[i].image+"\" height=\"120\" width=\"160\"></td><td><img src=\""+x[i].image2+"\" height=\"120\" width=\"160\"></td><td><img src=\""+x[i].image3+"\" height=\"120\" width=\"160\"></td><td><button class=\"delete\" value=\""+i+"\" type=\"button\">Delete</button></td></tr>");
+              }
+
+
+              // var img = document.createElement("img");
+              // // added `width` , `height` properties to `img` attributes
+              // img.width = "160px";
+              // img.height = "120px";
+              // img.src = x[0].image;
+              // var preview = document.getElementById("image");
+              // preview.append(img);
+
+          }
+      });
+
+      $(function () {
+        $( ".logout" ).click(function() { 
+          $.ajax({
+
+            type: "POST",
+            url: "/logout",
+
+            
+            success: function(data) {
+              window.location.href="/";
+            }
+          })
+        });
+
+        $('tbody.help').on('click','button.delete', function(){
+          check = $(this).val();
+          face_id = $("tr."+check+">td.hidden").text();
+
+          $.ajax({
+
+            type: "POST",
+            url: "/delete_student",
+            data: {
+              face_id : face_id
+            },
+            
+            success: function(data) {
+
+            }
+          })
+          $("tr."+check+"").remove();
+        });                   
+
+      });
+
+
+
+    </script>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <!--<div class="navbar-header">
+      <a class="navbar-brand" href="#">WebSiteName</a>
+    </div>-->
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="#">Home</a></li>
+      <li ><a href="createmember">Create New Member</a></li>
+      <li ><a href="search">Search</a></li>
+      <li ><a href="#" class="logout">Logout</a></li>
+   
+    </ul>
+    <ul class="nav navbar-nav username-detail">
+
+    </ul>
+  </div>
+</nav>
+
+<div class="container">
+  <h2>Named List Members</h2>
+  <!-- <p>The .table class adds basic styling (light padding and only horizontal dividers) to a table:</p>             -->
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Firstname</th>
+        <th>Lastname</th>
+        <th>Image(1)</th>
+        <th>Image(2)</th>
+        <th>Image(3)</th>
+      </tr>
+    </thead>
+    <tbody class="help">
+
+    </tbody>
+  </table>
+</div>
+
+
+
+</body>
+</html>

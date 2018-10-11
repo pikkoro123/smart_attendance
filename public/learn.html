@@ -1,0 +1,265 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:fb="http://ogp.me/ns/fb#">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <title>Camera and Video Control with HTML5 Example</title>
+    <meta name="description" content="Access the desktop camera and video using HTML, JavaScript, and Canvas.  The camera may be controlled using HTML5 and getUserMedia." />
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.css"/>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.js"></script>
+
+    <script type="text/javascript">
+
+        var username;
+        var firstname;
+        var surname;
+        var level;
+
+        var test;
+
+
+        $.ajax({
+            type: "get",
+            url: "/select_class",
+            success: function(data) {
+
+                x = data;
+                console.log(x);
+                for(var i in x)
+                {
+                   $('#class>tbody').append('<tr value={"class":"'+data[i].class+'","sec":"'+data[i].section+'","username":"'+data[i].t_username+'"}><td>'+x[i].class+'</td><td>'+x[i].section+'</td><td>'+x[i].firstname+' '+x[i].surname+'</td></tr>');
+                }
+
+
+            }
+        });
+
+        $.post("/username",
+        function(data){
+
+            username = data.username;
+            surname = data.surname;
+            firstname = data.firstname;
+            level = data.level;
+            if(level == 's')
+            {
+              $('.menu').append("<li><a href=\"createmember\">Add photo</a></li>");
+              $('.menu').append("<li class=\"active\"><a href=\"learn\">Learn</a></li>");
+            }
+            if(level == 't')
+            {
+                $('.menu').append("<li class=\"active\"><a href=\"class\">Class</a></li>");
+            }
+            $('.username-detail').append("<li><a href=\"analyze\">Welcome "+firstname+"  "+surname+"</a></li>");
+            $('.username-detail').append("<li ><a href=\"#\" class=\"logout\">Logout</a></li>");
+        });
+
+        $.post("/query_class_all",
+        function(data){
+            for(i in data)
+            {                 
+                $('#choose_class_modal').append('<option value={"class":"'+data[i].class+'","sec":"'+data[i].section+'","username":"'+data[i].username+'"}>'+data[i].class+'/'+data[i].section+'</option>');
+
+            }
+        });
+        $.post("/query_student_class",
+        function(data){
+            for(i in data)
+            {                 
+                $('#choose_class_modal2').append('<option value={"class":"'+data[i].class+'","sec":"'+data[i].section+'","username":"'+data[i].t_username+'"}>'+data[i].class+'/'+data[i].section+'</option>');
+
+            }
+        });
+    </script>
+</head>
+<body>
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+
+            <ul class="nav navbar-nav menu">
+                <li ><a href="home">Home</a></li>
+                <li ><a href="search">Search</a></li>
+                <li><a href="chatpage">Chat</a></li>
+                
+            </ul>
+            <ul class="nav navbar-nav username-detail">
+
+            </ul>
+            
+        </div>
+    </nav>
+    <div class="container">
+        <div class="container">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#create">Add Class</button><!-- data-target="#exampleModal" data-whatever="@getbootstrap" -->
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#remove">Drop Class</button>
+        </div>
+
+
+
+        <div class="container">
+            <h2>Class list</h2>
+        </div>
+
+        <div class="container">
+            <table id="class" class="display" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th>Class</th>
+                        <th>Section</th>
+                        <th>Teacher</th>
+                    </tr>
+                </thead>
+
+                <tbody id="demo">
+
+                </tbody>
+            </table>
+
+        </div>
+
+
+
+
+    </div>
+
+<div class="modal fade" id="create" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add class</h5>
+      </div>
+
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="class"><b>Class/Section</b></label>
+            <select class="form-control" id="choose_class_modal" class="form-control" name="class" required>
+            </select>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="add_class">Add</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="remove" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Drop class</h5>
+      </div>
+
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="class"><b>Class/Section</b></label>
+            <select class="form-control" id="choose_class_modal2" class="form-control" name="class" required>
+            </select>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="remove_class">Drop</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <script>
+        $(function () {
+            $('#class').DataTable();
+            $('.modal').on('hidden.bs.modal', function () {
+                $(this).find('form').trigger('reset');
+            })
+
+            $( "#add_class" ).click(function() { 
+
+                var class_chosen = $('#choose_class_modal').val();
+
+                var class_chosen_parse = JSON.parse(class_chosen);
+
+                $("#demo tr").remove();
+
+                $.ajax({
+
+                    type: "POST",
+                    url: "/add_class",
+                    data: {
+                        username: class_chosen_parse.username,
+                        class: class_chosen_parse.class,
+                        section: class_chosen_parse.sec
+                    },
+                                    
+                    success: function(data) {
+                        
+                        for(var i in data)
+                        {
+                            $('#demo').append('<tr value={"class":"'+data[i].class+'","sec":"'+data[i].section+'","username":"'+data[i].t_username+'"}><td>'+data[i].class+'</td><td>'+data[i].section+'</td><td>'+data[i].firstname+' '+data[i].surname+'</td></tr>');
+
+                        }
+                    }
+                })
+                $('#choose_class_modal2').append('<option value={"class":"'+class_chosen_parse.class+'","sec":"'+class_chosen_parse.sec+'","username":"'+class_chosen_parse.username+'"}>'+class_chosen_parse.class+'/'+class_chosen_parse.sec+'</option>');
+
+            });
+
+            $( "#remove_class" ).click(function() { 
+                var class_chosen = $('#choose_class_modal2').val();
+                $("#choose_class_modal2 option[value='"+class_chosen+"']").remove();
+                $("#demo tr[value='"+class_chosen+"']").remove();
+                // console.log(class_shosen);
+                var class_chosen_parse = JSON.parse(class_chosen);
+                $.ajax({
+
+                    type: "POST",
+                    url: "/drop_class",
+                    data: {
+                        username: class_chosen_parse.username,
+                        class: class_chosen_parse.class,
+                        section: class_chosen_parse.sec
+                    },
+                
+                    success: function(data) {
+
+                    }
+                })
+                $('#class').DataTable();
+            });
+
+
+            $( ".logout" ).click(function() { 
+                $.ajax({
+
+                    type: "POST",
+                    url: "/logout",
+
+                
+                success: function(data) {
+                    window.location.href="/";
+                }
+            })
+            });
+
+        });
+
+
+    </script>
+
+</body>
+</html>

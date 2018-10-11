@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns:fb="http://ogp.me/ns/fb#">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <title>Camera and Video Control with HTML5 Example</title>
+    <meta name="description" content="Access the desktop camera and video using HTML, JavaScript, and Canvas.  The camera may be controlled using HTML5 and getUserMedia." />
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
+
+    <script type="text/javascript">
+
+      var username;
+      var firstname;
+      var surname;
+      var level;
+      // var chatHistory = $("#privatechat-history");
+
+
+      var wow;
+
+      var x; // x คืออาเรย์รูปภาพ
+
+      $.post("/username",
+      function(data){
+        username = data.username;
+        surname = data.surname;
+        firstname = data.firstname;
+        level = data.level;
+        if(level == 's')
+        {
+          $('.menu').append("<li><a href=\"createmember\">Add photo</a></li>");
+          $('.menu').append("<li><a href=\"learn\">Learn</a></li>");
+        }
+        if(level == 't')
+        {
+          $('.menu').append("<li><a href=\"class\">Class</a></li>");
+        }
+        $('.username-detail').append("<li><a href=\"analyze\">Welcome "+firstname+"  "+surname+"</a></li>"); 
+        $('.username-detail').append("<li ><a href=\"#\" class=\"logout\">Logout</a></li>");
+
+        $('.name').append(firstname+" "+surname);
+      $.ajax({
+          type: "POST",
+          url: "/select_image_from_s",
+
+          data: {
+
+              username : username
+          },
+          success: function(data) {
+
+              x = data;
+              console.log(data);
+              if(x.length == 0)
+                $('.picture').append(" <tr><td><a href=\"createmember\">Please add your face picture</a></td></tr>");
+              for(var i in x)
+              {
+                 $('.picture').append(" <tr class=\""+i+"\"><td class=\"hidden\">"+x[i].face_id+"</td><td><img src=\""+x[i].image+"\" height=\"120\" width=\"160\"></td><td><img src=\""+x[i].image2+"\" height=\"120\" width=\"160\"></td><td><img src=\""+x[i].image3+"\" height=\"120\" width=\"160\"></td><td><button class=\"delete\" value=\""+i+"\" type=\"button\">Delete</button></td></tr>");
+              }
+
+
+              // var img = document.createElement("img");
+              // // added `width` , `height` properties to `img` attributes
+              // img.width = "160px";
+              // img.height = "120px";
+              // img.src = x[0].image;
+              // var preview = document.getElementById("image");
+              // preview.append(img);
+
+          }
+      });
+      });
+
+
+      $(function () {
+        $( ".logout" ).click(function() { 
+          $.ajax({
+
+            type: "POST",
+            url: "/logout",
+
+            
+            success: function(data) {
+              window.location.href="/";
+            }
+          })
+        });
+
+        $('tbody.picture').on('click','button.delete', function(){
+          check = $(this).val();
+          face_id = $("tr."+check+">td.hidden").text();
+
+          $.ajax({
+
+            type: "POST",
+            url: "/delete_student",
+            data: {
+              face_id : face_id
+            },
+            
+            success: function(data) {
+
+            }
+          })
+          $("tr."+check+"").remove();
+          $('.picture').append(" <tr><td><a href=\"createmember\">Please add your face picture</a></td></tr>");
+        });                   
+
+      });
+
+
+
+    </script>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <!--<div class="navbar-header">
+      <a class="navbar-brand" href="#">WebSiteName</a>
+    </div>-->
+    <ul class="nav navbar-nav menu">
+      <li class="active"><a href="#">Home</a></li>
+      <li ><a href="search">Search</a></li>
+      <li><a href="chatpage">Chat</a></li>
+      
+   
+    </ul>
+    <ul class="nav navbar-nav username-detail">
+
+    </ul>
+  </div>
+</nav>
+
+<div class="container">
+  <h2>Profile</h2>
+  <h4 class="name"></h4>
+  <h2>Picture</h2>
+  <table class="table">
+    <tbody class="picture">
+
+    </tbody>
+  </table>
+</div>
+
+
+
+</body>
+</html>
